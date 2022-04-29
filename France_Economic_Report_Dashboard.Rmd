@@ -1,0 +1,106 @@
+---
+title: "France Economic Report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(ggmap)
+library(ggplot2)
+library(maps)
+library(mapproj)
+library(mapdata)
+library(cowplot)     # package for ggdraw() ad draw_plot()
+```
+
+```{r}
+mydata <- map_data('world')   # dis is the world map dataset
+
+```
+
+```{r}
+yrdata <- read.csv(file.choose())   # select chapter11data.txt file
+```
+
+## Row {data-height="400"}
+
+```{r}
+ourdata <- map_data('world', region = c('France'))  
+
+myplot <- ourdata %>%
+       ggplot(aes(long, lat, group = group, fill = region)) +      # plots a map chart of d                                               stated country
+       geom_polygon(color = 'black') +
+       coord_map('polyconic')
+
+ggdraw() + draw_plot(myplot, x = 0.1, y = 0.35,
+                     width = 0.8, height = 0.7)  
+```
+
+### Gross Domestic Product (Billions USD) in 2017
+
+```{r}
+valueBox(2860, icon = "fa-euro-sign", color = "darkgreen")
+```
+
+### Foreign Direct Investment (Billions USD) in 2017
+
+```{r}
+valueBox(37, icon = "fa-arrow-alt-circle-up",  color = "blue")
+```
+
+### Labor Force (Millions USD) in 2017
+
+```{r}
+valueBox(30, icon = "fa-user-alt",  color = "darkorange")
+```
+
+## Row {data-height="600"}
+
+### Gross Domestic Product (1990-2017)
+
+```{r}
+yrdata %>% 
+  filter(year >= 1995) %>%
+  ggplot(aes(year, gdp)) +
+  geom_line(color = "darkgreen", size = 1.5) +   
+  geom_point(color = "darkgreen", size = 3.5) +
+  labs(x = "Year", y = "Gross Domestic Product") +
+  theme(axis.title.x = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"),
+        axis.title.y = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"))
+```
+
+### Foreign Direct Investment (1990-2017)
+
+```{r}
+yrdata %>% 
+  filter(year >= 1995) %>%
+  ggplot(aes(year, fdi)) +
+  geom_line(color = "blue", size = 1.5) +   
+  geom_point(color = "blue", size = 3.5) +
+  labs(x = "Year", y = "Foreign Direct Investment") +
+  theme(axis.title.x = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"),
+        axis.title.y = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"))
+```
+
+### Labor Force (1990-2017)
+
+```{r}
+yrdata %>% 
+  filter(year >= 1995) %>%
+  ggplot(aes(year, laborForce)) +
+  geom_line(color = "darkorange", size = 1.5) +   
+  geom_point(color = "darkorange", size = 3.5) +
+  labs(x = "Year", y = "Labor Force") +
+  theme(axis.title.x = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"),
+        axis.title.y = element_text(color = "#0099f9", size = 15,
+                                    face = "bold"))
+```
